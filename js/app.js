@@ -11,7 +11,24 @@ const elTableShowBody = document.getElementById("table-show__body");
 function render(){
   const arr = JSON.parse(localStorage.getItem("conferences")) ? JSON.parse(localStorage.getItem("conferences")) : [];
   elTableShowBody.innerHTML = "";
-  
+  filterTypes(arr).forEach(lecture => {
+    const lecuturesArr = arr.filter(item => item.lectureTitle === lecture)
+    console.log(arr.filter(item => item.lectureTitle === lecture))
+    const lectureTitleRow = document.createElement("tr");
+    lectureTitleRow.innerHTML = `<th scope="row" colspan=4 style="text-align: center">${lecture}</th>`;
+    elTableShowBody.appendChild(lectureTitleRow)
+    lecuturesArr.forEach(lecture => {
+      const lectureDataRow = document.createElement("tr");
+      lectureDataRow.innerHTML = `
+        <td>${lecture.lectureDate}</td>
+        <td>${lecture.startTime} - ${lecture.endingTime}</td>
+        <td>${lecture.lectureTitle}</td>
+        <td>${lecture.fullName}</td>
+      `
+      elTableShowBody.appendChild(lectureDataRow)
+    })
+  })
+  console.log()
 }
 
 render();
@@ -39,4 +56,14 @@ elForm.addEventListener("submit", (e) => {
   
 function configureDate(date){
   return date.value.split("-").reverse().join(".")
+}
+
+function filterTypes(arr) {
+  const types = [];
+  arr.forEach(({lectureTitle}) => {
+    if(!types.includes(lectureTitle)){
+      types.push(lectureTitle)
+    }
+  });
+  return types;
 }
