@@ -7,17 +7,18 @@ const elFromTime = document.getElementById("from");
 const elToTime = document.getElementById("to");
 const elLectureHeading = document.getElementById("seksiya");
 const elTableShowBody = document.getElementById("table-show__body");
+const elTitle = document.getElementById("title");
 
 function render(){
   const arr = JSON.parse(localStorage.getItem("conferences")) ? JSON.parse(localStorage.getItem("conferences")) : [];
   elTableShowBody.innerHTML = "";
-  filterTypes(arr).forEach(lecture => {
-    const lecuturesArr = arr.filter(item => item.lectureTitle === lecture)
-    console.log(arr.filter(item => item.lectureTitle === lecture))
-    const lectureTitleRow = document.createElement("tr");
-    lectureTitleRow.innerHTML = `<th scope="row" colspan=4 style="text-align: center">${lecture}</th>`;
-    elTableShowBody.appendChild(lectureTitleRow)
-    lecuturesArr.forEach(lecture => {
+  const lectureSubjects = filterType(arr);
+  lectureSubjects.forEach(lectureSub => {
+    const lectures = arr.filter(item => item.lectureSubject === lectureSub);
+    const elLectureSubjectRow = document.createElement("tr");
+    elLectureSubjectRow.innerHTML = `<th colspan="4" style="text-align: center" >${lectureSub}</td>`;
+    elTableShowBody.appendChild(elLectureSubjectRow);
+    lectures.forEach(lecture => {
       const lectureDataRow = document.createElement("tr");
       lectureDataRow.innerHTML = `
         <td>${lecture.lectureDate}</td>
@@ -28,7 +29,6 @@ function render(){
       elTableShowBody.appendChild(lectureDataRow)
     })
   })
-  console.log()
 }
 
 render();
@@ -40,16 +40,17 @@ elForm.addEventListener("submit", (e) => {
       const newConference = {
         id: conferenceArr[conferenceArr.length - 1] ? conferenceArr[conferenceArr.length - 1].id + 1 : 0,
         fullName: `${elSurname.value.charAt(0).toUpperCase() + elSurname.value.slice(1)} ${elName.value[0].toUpperCase()}. ${elSharif.value[0].toUpperCase()}.`,
-        lectureTitle: elLectureHeading.value,
+        lectureSubject: elLectureHeading.value,
         lectureDate: configureDate(elDate),
         startTime: elFromTime.value,
-        endingTime: elToTime.value
+        endingTime: elToTime.value,
+        lectureTitle: elTitle.value
       }
       conferenceArr.push(newConference);
       localStorage.setItem("conferences", JSON.stringify(conferenceArr))
       render();
     }else {
-      alert("Vaqtni to'g'ri kiriting!")
+      alert("Vaqtni to'g'ri kiriting!");
     }
   })
   
@@ -58,12 +59,12 @@ function configureDate(date){
   return date.value.split("-").reverse().join(".")
 }
 
-function filterTypes(arr) {
-  const types = [];
-  arr.forEach(({lectureTitle}) => {
-    if(!types.includes(lectureTitle)){
-      types.push(lectureTitle)
+function filterType(arr){
+  let types = [];
+  arr.forEach(({lectureSubject}) => {
+    if(!types.includes(lectureSubject)){
+      types.push(lectureSubject);
     }
-  });
+  })
   return types;
 }
