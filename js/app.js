@@ -9,7 +9,7 @@ const elLectureHeading = document.getElementById("seksiya");
 const elTableShowBody = document.getElementById("table-show__body");
 const elTitle = document.getElementById("title");
 
-// Render
+// RENDER
 (function render() {
   const arr = JSON.parse(localStorage.getItem("conferences"))
     ? JSON.parse(localStorage.getItem("conferences"))
@@ -34,7 +34,7 @@ const elTitle = document.getElementById("title");
       }
     );
   });
-}());
+})();
 
 elForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -63,7 +63,7 @@ elForm.addEventListener("submit", (e) => {
   }
 });
 
-//Search
+//SEARCH
 
 const elFormSearch = document.getElementById("search");
 const elTableSearchB = document.getElementById("table-search__body");
@@ -80,18 +80,33 @@ elFormSearch.addEventListener("submit", (e) => {
     elSpeakerName.value
   ) {
     const conferenceArr = JSON.parse(localStorage.getItem("conferences"));
-    filterSearch(conferenceArr);
+    if (filterSearch(conferenceArr).length > 0) {
+      renderSearchRusult(filterSearch(conferenceArr));
+    } else {
+      alert("Hech qanday ma'lumot topilmadi!");
+    }
   } else {
     alert("Qidiruv uchun ma'lumot kiriting!");
   }
 });
 
-//Render Search Rusult
-function renderSearchRusult(){
-  
+// RENDER SEARCH RESULT
+function renderSearchRusult(arr) {
+  elTableSearchB.innerHTML = "";
+  let counter = 1;
+  arr.forEach(({lectureDate, startTime, endingTime, lectureSubject, lectureTitle, fullName}) => {
+    const elTableRow = document.createElement("tr");
+    elTableRow.innerHTML = `
+    <td>${counter++}</td>
+    <td>${lectureDate} ${startTime} - ${endingTime}</td>
+    <td>${lectureSubject}</td>
+    <td>${fullName} - ${lectureTitle}</td>
+    `;
+    elTableSearchB.appendChild(elTableRow);
+  });
 }
 
-// Functions
+// FUNCTIONS
 function filterSearch(arr) {
   let resultArr = [];
   if (elSubjectSearch.value !== "Menyuni ochish") {
@@ -108,9 +123,7 @@ function filterSearch(arr) {
     const nameRegex = new RegExp(elSpeakerName.value, "gi");
     resultArr = resultArr.filter((item) => item.fullName.match(nameRegex));
   }
-  return (resultArr = resultArr.sort((a, b) =>
-    a.lectureDate.localeCompare(b.lectureDate)
-  ));
+  return resultArr.sort((a, b) => a.lectureDate.localeCompare(b.lectureDate));
 }
 
 function filterType(arr) {
