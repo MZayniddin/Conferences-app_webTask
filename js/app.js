@@ -9,7 +9,8 @@ const elLectureHeading = document.getElementById("seksiya");
 const elTableShowBody = document.getElementById("table-show__body");
 const elTitle = document.getElementById("title");
 
-function render() {
+// Render
+(function render() {
   const arr = JSON.parse(localStorage.getItem("conferences"))
     ? JSON.parse(localStorage.getItem("conferences"))
     : [];
@@ -20,20 +21,20 @@ function render() {
     const elLectureSubjectRow = document.createElement("tr");
     elLectureSubjectRow.innerHTML = `<th colspan="4" style="text-align: center" >${lectureSub}</td>`;
     elTableShowBody.appendChild(elLectureSubjectRow);
-    lectures.forEach((lecture) => {
-      const lectureDataRow = document.createElement("tr");
-      lectureDataRow.innerHTML = `
-        <td>${lecture.lectureDate}</td>
-        <td>${lecture.startTime} - ${lecture.endingTime}</td>
-        <td>${lecture.lectureTitle}</td>
-        <td>${lecture.fullName}</td>
+    lectures.forEach(
+      ({ lectureDate, startTime, endingTime, lectureTitle, fullName }) => {
+        const lectureDataRow = document.createElement("tr");
+        lectureDataRow.innerHTML = `
+        <td>${lectureDate}</td>
+        <td>${startTime} - ${endingTime}</td>
+        <td>${lectureTitle}</td>
+        <td>${fullName}</td>
       `;
-      elTableShowBody.appendChild(lectureDataRow);
-    });
+        elTableShowBody.appendChild(lectureDataRow);
+      }
+    );
   });
-}
-
-render();
+}());
 
 elForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -65,14 +66,51 @@ elForm.addEventListener("submit", (e) => {
 //Search
 
 const elFormSearch = document.getElementById("search");
-const elTableSearchB = document.getElementById("table-search__body")
+const elTableSearchB = document.getElementById("table-search__body");
+const elDateSearch = document.getElementById("s-date");
+const elSubjectSearch = document.getElementById("search-seksiya");
+const elSpeakerName = document.getElementById("s-speaker");
+const elSearchShow = document.getElementById("table-search__body");
+
 elFormSearch.addEventListener("submit", (e) => {
   e.preventDefault();
-  alert("SEarh")
-})
+  if (
+    elDateSearch.value ||
+    elSubjectSearch.value !== "Menyuni ochish" ||
+    elSpeakerName.value
+  ) {
+    const conferenceArr = JSON.parse(localStorage.getItem("conferences"));
+    filterSearch(conferenceArr);
+  } else {
+    alert("Qidiruv uchun ma'lumot kiriting!");
+  }
+});
 
-function configureDate(date) {
-  return date.value.split("-").reverse().join(".");
+//Render Search Rusult
+function renderSearchRusult(){
+  
+}
+
+// Functions
+function filterSearch(arr) {
+  let resultArr = [];
+  if (elSubjectSearch.value !== "Menyuni ochish") {
+    resultArr = arr.filter(
+      (item) => item.lectureSubject === elSubjectSearch.value
+    );
+  }
+  if (elDateSearch.value) {
+    resultArr = resultArr.filter(
+      (item) => item.lectureDate === configureDate(elDateSearch)
+    );
+  }
+  if (elSpeakerName.value) {
+    const nameRegex = new RegExp(elSpeakerName.value, "gi");
+    resultArr = resultArr.filter((item) => item.fullName.match(nameRegex));
+  }
+  return (resultArr = resultArr.sort((a, b) =>
+    a.lectureDate.localeCompare(b.lectureDate)
+  ));
 }
 
 function filterType(arr) {
@@ -83,4 +121,8 @@ function filterType(arr) {
     }
   });
   return types;
+}
+
+function configureDate(date) {
+  return date.value.split("-").reverse().join(".");
 }
