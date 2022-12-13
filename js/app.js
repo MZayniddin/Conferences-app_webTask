@@ -10,7 +10,7 @@ const elTableShowBody = document.getElementById("table-show__body");
 const elTitle = document.getElementById("title");
 
 // RENDER
-(function render() {
+function render() {
   const arr = JSON.parse(localStorage.getItem("conferences"))
     ? JSON.parse(localStorage.getItem("conferences"))
     : [];
@@ -22,19 +22,21 @@ const elTitle = document.getElementById("title");
     elLectureSubjectRow.innerHTML = `<th colspan="4" style="text-align: center" >${lectureSub}</td>`;
     elTableShowBody.appendChild(elLectureSubjectRow);
     lectures.forEach(
-      ({ lectureDate, startTime, endingTime, lectureTitle, fullName }) => {
+      ({id, lectureDate, startTime, endingTime, lectureTitle, fullName }) => {
         const lectureDataRow = document.createElement("tr");
         lectureDataRow.innerHTML = `
         <td>${lectureDate}</td>
         <td>${startTime} - ${endingTime}</td>
         <td>${lectureTitle}</td>
         <td>${fullName}</td>
+        <td><i style="cursor: pointer;" data-row-id="${id}" class="fa-solid fa-trash"></i></td>
       `;
         elTableShowBody.appendChild(lectureDataRow);
       }
     );
   });
-})();
+};
+render()
 
 elForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -105,6 +107,18 @@ function renderSearchRusult(arr) {
     elTableSearchB.appendChild(elTableRow);
   });
 }
+
+//DELETE
+elTableShowBody.addEventListener("click", (e) => {
+  if(e.target.classList.contains("fa-trash")){
+    console.log(e.target.dataset.rowId);
+    const conferenceArr = JSON.parse(localStorage.getItem("conferences"));
+    const removeId = conferenceArr.findIndex(lecture => lecture.id == e.target.dataset.rowId);
+    conferenceArr.splice(removeId, 1);
+    localStorage.setItem("conferences", JSON.stringify(conferenceArr));
+    render();
+  }
+})
 
 // FUNCTIONS
 function filterSearch(arr) {
