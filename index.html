@@ -14,6 +14,7 @@
 
   <body>
     <div class="container">
+      <!-- Qo'shish Bloki -->
       <h2 class="text-center my-4">Kiritish</h2>
       <form class="form row">
         <div class="row">
@@ -91,12 +92,14 @@
         </thead>
         <tbody id="table-show__body"></tbody>
       </table>
+
+      <!-- Qidirish Bloki -->
       <h2 class="text-center my-4">Qidirish</h2>
-      <form class="form row">
+      <form id="search" class="form row">
         <div class="row">
           <div class="col-4">
             <label for="s-date" class="form-label">Ma'ruza sanasi:</label>
-            <input type="text" class="form-control" id="s-date" required />
+            <input type="text" class="form-control" id="s-date" />
           </div>
           <div class="col-3">
             <label for="seksiya" class="form-label">Seksiya:</label>
@@ -116,11 +119,22 @@
           </div>
           <div class="col-4">
             <label for="s-speaker" class="form-label">Ma'ruzachi:</label>
-            <input type="text" class="form-control" id="s-speaker" required />
+            <input type="text" class="form-control" id="s-speaker" />
           </div>
         </div>
         <button type="submit" class="btn btn-primary mt-3">search</button>
       </form>
+      <table id="table-search" class="table mt-5">
+        <thead>
+          <tr>
+            <th scope="col">№</th>
+            <th scope="col">Sana, vaqt</th>
+            <th scope="col">Seksiya</th>
+            <th scope="col">Ma'ruza ma'lumotlari</th>
+          </tr>
+        </thead>
+        <tbody id="table-search__body"></tbody>
+      </table>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"></script>
