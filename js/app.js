@@ -61,6 +61,7 @@ elForm.addEventListener("submit", (e) => {
       conferenceArr.push(newConference);
       localStorage.setItem("conferences", JSON.stringify(conferenceArr));
       render();
+      alert("Muvaffaqiyatli qo'shildi!");
     } else {
       alert("Bu vaqtda boshqa Konferensiya mavjud!");
     }
@@ -124,7 +125,6 @@ function renderSearchRusult(arr) {
 //DELETE
 elTableShowBody.addEventListener("click", (e) => {
   if (e.target.classList.contains("fa-trash")) {
-    console.log(e.target.dataset.rowId);
     const conferenceArr = JSON.parse(localStorage.getItem("conferences"));
     const removeId = conferenceArr.findIndex(
       (lecture) => lecture.id == e.target.dataset.rowId
@@ -156,15 +156,20 @@ function filterSearch(arr) {
 }
 
 function checkTime(newData, arr) {
-  const sameDate = arr.filter(lecture => lecture.lectureDate === newData.lectureDate);
-  console.log(sameDate);
+  const sameDate = arr.filter(
+    (lecture) => lecture.lectureDate === newData.lectureDate
+  );
   let checker = true;
-  sameDate.forEach(lecture => {
-    if(lecture.startTime <= newData.startTime && newData.startTime <= lecture.endingTime || lecture.startTime <= newData.endingTime && newData.endingTime <= lecture.endingTime){
+  sameDate.forEach((lecture) => {
+    if (
+      (lecture.startTime <= newData.startTime &&
+        newData.startTime <= lecture.endingTime) ||
+      (lecture.startTime <= newData.endingTime &&
+        newData.endingTime <= lecture.endingTime)
+    ) {
       checker = false;
     }
-  })
-  console.log(checker);
+  });
   return checker;
 }
 
