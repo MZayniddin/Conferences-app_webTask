@@ -158,7 +158,14 @@ function filterSearch(arr) {
 function checkTime(newData, arr) {
   const sameDate = arr.filter(lecture => lecture.lectureDate === newData.lectureDate);
   console.log(sameDate);
-  return true
+  let checker = true;
+  sameDate.forEach(lecture => {
+    if(lecture.startTime <= newData.startTime && newData.startTime <= lecture.endingTime || lecture.startTime <= newData.endingTime && newData.endingTime <= lecture.endingTime){
+      checker = false;
+    }
+  })
+  console.log(checker);
+  return checker;
 }
 
 function filterType(arr) {
