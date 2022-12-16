@@ -22,7 +22,7 @@ function render() {
     elLectureSubjectRow.innerHTML = `<th colspan="4" style="text-align: center" >${lectureSub}</td>`;
     elTableShowBody.appendChild(elLectureSubjectRow);
     lectures.forEach(
-      ({id, lectureDate, startTime, endingTime, lectureTitle, fullName }) => {
+      ({ id, lectureDate, startTime, endingTime, lectureTitle, fullName }) => {
         const lectureDataRow = document.createElement("tr");
         lectureDataRow.innerHTML = `
         <td>${lectureDate}</td>
@@ -35,8 +35,8 @@ function render() {
       }
     );
   });
-};
-render()
+}
+render();
 
 elForm.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -57,9 +57,13 @@ elForm.addEventListener("submit", (e) => {
       endingTime: elToTime.value,
       lectureTitle: elTitle.value,
     };
-    conferenceArr.push(newConference);
-    localStorage.setItem("conferences", JSON.stringify(conferenceArr));
-    render();
+    if (checkTime(newConference, conferenceArr)) {
+      conferenceArr.push(newConference);
+      localStorage.setItem("conferences", JSON.stringify(conferenceArr));
+      render();
+    } else {
+      alert("Bu vaqtda boshqa Konferensiya mavjud!");
+    }
   } else {
     alert("Vaqtni to'g'ri kiriting!");
   }
@@ -96,29 +100,40 @@ elFormSearch.addEventListener("submit", (e) => {
 function renderSearchRusult(arr) {
   elTableSearchB.innerHTML = "";
   let counter = 1;
-  arr.forEach(({lectureDate, startTime, endingTime, lectureSubject, lectureTitle, fullName}) => {
-    const elTableRow = document.createElement("tr");
-    elTableRow.innerHTML = `
+  arr.forEach(
+    ({
+      lectureDate,
+      startTime,
+      endingTime,
+      lectureSubject,
+      lectureTitle,
+      fullName,
+    }) => {
+      const elTableRow = document.createElement("tr");
+      elTableRow.innerHTML = `
     <td>${counter++}</td>
     <td>${lectureDate} ${startTime} - ${endingTime}</td>
     <td>${lectureSubject}</td>
     <td>${fullName} - ${lectureTitle}</td>
     `;
-    elTableSearchB.appendChild(elTableRow);
-  });
+      elTableSearchB.appendChild(elTableRow);
+    }
+  );
 }
 
 //DELETE
 elTableShowBody.addEventListener("click", (e) => {
-  if(e.target.classList.contains("fa-trash")){
+  if (e.target.classList.contains("fa-trash")) {
     console.log(e.target.dataset.rowId);
     const conferenceArr = JSON.parse(localStorage.getItem("conferences"));
-    const removeId = conferenceArr.findIndex(lecture => lecture.id == e.target.dataset.rowId);
+    const removeId = conferenceArr.findIndex(
+      (lecture) => lecture.id == e.target.dataset.rowId
+    );
     conferenceArr.splice(removeId, 1);
     localStorage.setItem("conferences", JSON.stringify(conferenceArr));
     render();
   }
-})
+});
 
 // FUNCTIONS
 function filterSearch(arr) {
@@ -138,6 +153,12 @@ function filterSearch(arr) {
     resultArr = resultArr.filter((item) => item.fullName.match(nameRegex));
   }
   return resultArr.sort((a, b) => a.lectureDate.localeCompare(b.lectureDate));
+}
+
+function checkTime(newData, arr) {
+  const sameDate = arr.filter(lecture => lecture.lectureDate === newData.lectureDate);
+  console.log(sameDate);
+  return true
 }
 
 function filterType(arr) {
